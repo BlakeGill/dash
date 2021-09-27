@@ -1,0 +1,9 @@
+jupyter launch 
+
+on powershell 
+
+docker run -p 8888:8888 -v /Users/BGill/Docker:/home/jovyan/work shinokada/jupyter-notebook
+
+docker container ls
+
+docker exec -it **** /bin/bash
