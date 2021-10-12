@@ -17,8 +17,11 @@ app.layout = html.Div(children=[
     html.H1(children='Hello World!'),
     html.Div(children='Dash: a framework')
 ])
+#'#group', 'false', 'false.1', 'true', 'true.1', 'false.2', 'false.3', 'true.2', 'true.3'
+fig = px.line(df, x='false.3', y='true.2')
+fig.show()
 
-fig = px.line(df, x='_time', y='_value')
+fig = go.Figure(go.Scatter(x=df['true.2'], y=df['false.3']))
 fig.show()
 
 if __name__ == '__main__':
