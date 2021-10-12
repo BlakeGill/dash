@@ -6,14 +6,15 @@ import pandas as pd
 import numpy as np
 from dash.dependencies import Input, Output
 
-df = pd.read_csv('https://gist.githubusercontent.com/omarish/5687264/raw/7e5c814ce6ef33e25d5259c1fe79463c190800d9/mpg.csv')
+df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/2021-10-08-13-48_influxdb_data.csv')
 
 app = dash.Dash()
 
 
+print(df)
 app.layout = html.Div(children=[
     html.H1(children='Hello World!'),
-    html.div(children='Dash: a framework'),
+    html.Div(children='Dash: a framework'),
 
 dcc.Graph(
     id='graphid',
