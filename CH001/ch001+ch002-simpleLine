@@ -1,0 +1,15 @@
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+import plotly.graph_objs as go
+import pandas as pd
+import plotly
+import plotly.express as px
+import numpy as np
+from dash.dependencies import Input, Output, State
+
+app = dash.Dash()
+
+df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/ch001%20%26%20ch002%20-%202021-10-19-15-01_influxdb_data.csv')
+df001 = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/2021-10-12-14-14_influxdb_data.csv')
+df002 = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/ch002%20-2021-10-19-15-36_influxdb_data.csv')
