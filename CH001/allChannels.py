@@ -16,7 +16,7 @@ df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/all-ac
 app.layout = html.Div(children=[
     html.H1(children='Status of Channels'),
     dbc.Col([
-        <img src=
+        
     ], width={'order':1}
 ),
     dbc.Col([
