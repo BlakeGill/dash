@@ -3,34 +3,60 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 import pandas as pd
+import plotly
 import plotly.express as px
 import numpy as np
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
+import dash_bootstrap_components as dbc
+import base64
 
-df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/2021-10-12-14-14_influxdb_data.csv')
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-app = dash.Dash()
+df = pd.read_csv(
+    'https://raw.githubusercontent.com/BlakeGill/dash/master/all-accrest-channels-2021-10-20-14-02_influxdb_data.csv')
+
+app.layout = html.Div(children=[
+    html.H1(children='Status of Channels'),
+        dbc.Col([
+            html.Img(
+                dict(
+                    source='../dashboard.jpg',
+                    xref='x',
+                    yref='y',
+                    x=0,
+                    y=3,
+                    sizex=2,
+                    sizey=2,
+                    sizing='stretch',
+                )
+            ), html.H2('Image of system'),
+            dcc.Dropdown(id='blank', multi=False,
+                         options=[{'label' : x, 'value':x}
+                                  for x in sorted(df['_field'].unique())]
+                         ),
+            dcc.Graph(id='line-fig,', figure={})
+        ],
+
+    ),
+    dbc.Col([
+        dcc.Dropdown(id='Channel-dropdown', multi=True, value=['Ch000_accrest_g'],
+                     options=[{'label': i, 'value': i}
+                              for i in sorted(df['_field'].unique())],
+                     ),
+        dcc.Graph(id='status-graph', figure={})
+    ], )
+])
 
 
-#'#group', 'false', 'false.1', 'true', 'true.1', 'false.2', 'false.3', 'true.2', 'true.3'
-fig = px.line(df, x='_time', y='_value')
-fig.update_yaxes(categoryorder='category ascending', type='log', tick0=0, dtick=1)
+@app.callback(
+    Output(component_id='status-graph', component_property='figure'),
+    Input(component_id='Channel-dropdown', component_property='value')
+)
+def update_graph(selected_channel):
+    dff = df[df['_field'].isin(selected_channel)]
+    line_fig = px.line(dff, x='_time', y='_value', color='_field')
+    return line_fig
 
-fig.show()
 
 if __name__ == '__main__':
-    app.run_server()
-
-    for group, dataframe in fields:
-        dataframe = df.sort_values(by=['_time'])
-        trace = go.line(x='_time',
-                        y='value',
-                        marker=dict(color=colors[len(data)]),
-                        name=group)
-        data.append(trace)
-
-    layout = go.Layout(xaxis={'title: Time'},
-                       # yaxis={'title: Status'},
-                       # hovermode='closest')
-                       figure=go.Figure(data=data, layout=layout)
-    figure.show()
+    app.run_server(debug=False)

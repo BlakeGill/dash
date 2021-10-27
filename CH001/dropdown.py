@@ -13,13 +13,13 @@ import base64
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 df = pd.read_csv(
-    'https://raw.githubusercontent.com/BlakeGill/dash/master/all-accrest-channels-2021-10-20-14-02_influxdb_data.csv')
+    'https://raw.githubusercontent.com/BlakeGill/dash/master/FeatureTable_All.csv')
 
 app.layout = html.Div(children=[
     html.H1(children='Status of Channels'),
-        dcc.Dropdown(id='Channel-dropdown', multi=True, value=['Ch000_accrest_g'],
+        dcc.Dropdown(id='Channel-dropdown', multi=True, value=['A1_All'],
                      options=[{'label': i, 'value': i}
-                              for i in sorted(df['_field'].unique())],
+                              for i in sorted(df['A1_ALL'].unique())],
                      ),
         dcc.Graph(id='status-graph', figure={})
     ], )
@@ -31,8 +31,8 @@ app.layout = html.Div(children=[
     Input(component_id='Channel-dropdown', component_property='value')
 )
 def update_graph(selected_channel):
-    dff = df[df['_field'].isin(selected_channel)]
-    line_fig = px.line(dff, x='_time', y='_value', color='_field')
+    dff = df[df['A1_ALL'].isin(selected_channel)]
+    line_fig = px.line(dff, x='Date_Time', y='_value', color='_field')
     return line_fig
 
 
