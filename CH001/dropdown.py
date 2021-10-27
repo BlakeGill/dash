@@ -1,57 +1,40 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
-import plotly.express as px
-
+import plotly.graph_objs as go
 import pandas as pd
+import plotly
+import plotly.express as px
+import numpy as np
+from dash.dependencies import Input, Output, State
+import dash_bootstrap_components as dbc
+import base64
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/2021-10-19-11-52_influxdb_data.csv')
+df = pd.read_csv(
+    'https://raw.githubusercontent.com/BlakeGill/dash/master/all-accrest-channels-2021-10-20-14-02_influxdb_data.csv')
 
-available_indicators = df['_field'].unique()
+app.layout = html.Div(children=[
+    html.H1(children='Status of Channels'),
+        dcc.Dropdown(id='Channel-dropdown', multi=True, value=['Ch000_accrest_g'],
+                     options=[{'label': i, 'value': i}
+                              for i in sorted(df['_field'].unique())],
+                     ),
+        dcc.Graph(id='status-graph', figure={})
+    ], )
 
-app.layout = html.Div([
-    html.Div([
-
-        html.Div([
-            dcc.Dropdown(
-                id='yaxis-column',
-                options=[{'label': i, 'value': i} for i in available_indicators],
-                value='Ch001_accrest_g'
-            ),
-            dcc.RadioItems(
-                id='yaxis-type',
-                options=[{'label': i, 'value': i} for i in ['Linear', 'Log']],
-                value='Linear',
-                labelStyle={'display': 'inline-block'}
-            )
-        ], style={'width': '48%', 'float': 'right', 'display': 'inline-block'})
-    ]),
-
-    dcc.Graph(id='indicator-graphic'),
-])
 
 
 @app.callback(
-    Output('indicator-graphic', 'figure'),
-    Input('yaxis-column', 'value'),
-    Input('yaxis-type', 'value'),
+    Output(component_id='status-graph', component_property='figure'),
+    Input(component_id='Channel-dropdown', component_property='value')
 )
-
-def update_graph(xaxis_column_name, yaxis_column_name, xaxis_type, yaxis_type):
-
-    fig = px.line(df, x=['_time'] == xaxis_column_name['Time'], y=['_value'] == yaxis_column_name['Status'])
-
-    fig.update_xaxes(title=xaxis_column_name,
-                     type='linear' if xaxis_type == 'Linear' else 'log')
-
-    fig.update_yaxes(title=yaxis_column_name,
-                     type='linear' if yaxis_type == 'Linear' else 'log')
-
-    return fig
+def update_graph(selected_channel):
+    dff = df[df['_field'].isin(selected_channel)]
+    line_fig = px.line(dff, x='_time', y='_value', color='_field')
+    return line_fig
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
