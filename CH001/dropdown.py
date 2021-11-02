@@ -38,9 +38,8 @@ app.layout = html.Div(children=[
 )
 
 def update_graph(selected_channel):
-    dff = df[df.isin(selected_channel)]
-    line_fig = px.line(dff, x='Date_Time', y='A1_All')
-    return line_fig
+    dff = df[df.State==selected_channel]
+    return [{'label': c, 'value': c} for c in sorted(dff.Column.unique)]
 
 def update_output(value):
     return 'You have selected "{}"'.format(value)
