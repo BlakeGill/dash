@@ -18,14 +18,28 @@ statuslist = []
 parameterlist = []
 channellist = []
 
-for i in df:
+for i in df.columns:
         if '_' not in i:
                 pass
         else:
                 parameterlist.append([i.split('_', 1)[0]])
 
-
 print(parameterlist)
 
-df.index = pd.Datetimeindex.df['Date_Time']
-print(df)
+dcc.Dropdown(id='blank', multi=False,
+                         options=[{'label' : x, 'value':x}
+                                  for x in sorted(df.columns)]
+                         ),
+dcc.Graph(id='line-fig,', figure={})
+
+@app.callback(
+    Output(component_id='line-fig', component_property='figure'),
+    Input(component_id='Channel-dropdown', component_property='value')
+)
+def update_graph(parameterlist):
+    dff = df[df[0].isin(parameterlist)]
+    line_fig = px.line(dff, x='Date_Time', y='')
+    return line_fig
+
+if __name__ == '__main__':
+    app.run_server(debug=False)

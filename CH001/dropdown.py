@@ -12,29 +12,38 @@ import base64
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-df = pd.read_csv(
-    'https://raw.githubusercontent.com/BlakeGill/dash/master/FeatureTable_All.csv')
+df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/FeatureTable_All.csv', sep=';')
 
 app.layout = html.Div(children=[
     html.H1(children='Status of Channels'),
-        dcc.Dropdown(id='Channel-dropdown', multi=True, value=['A1_All'],
-                     options=[{'label': i, 'value': i}
-                              for i in sorted(df['A1_ALL'].unique())],
-                     ),
-        dcc.Graph(id='status-graph', figure={})
-    ], )
-
-
+        dcc.Dropdown(id='Channel-dropdown', multi=True,
+        options = [
+            {'label': 'A1', 'Value' : 'A1_All'},
+            {'label': 'A2', 'Value' : 'A2_All'},
+            {'label': 'A3', 'Value' : 'A3_All'}
+        ],),
+        html.Div(id='dd-output'),
+        dcc.Graph(id='line-fig,', figure={})
+    ])
 
 @app.callback(
-    Output(component_id='status-graph', component_property='figure'),
-    Input(component_id='Channel-dropdown', component_property='value')
+    Output('dd-output-container', 'children'),
+    Input('demo-dropdown', 'value')
 )
+
+@app.callback(
+    Output(component_id='line-fig', component_property='figure'),
+    Input(component_id='Channel-dropdown', component_property='value')
+
+)
+
 def update_graph(selected_channel):
-    dff = df[df['A1_ALL'].isin(selected_channel)]
-    line_fig = px.line(dff, x='Date_Time', y='_value', color='_field')
+    dff = df[df.isin(selected_channel)]
+    line_fig = px.line(dff, x='Date_Time', y='A1_All')
     return line_fig
 
+def update_output(value):
+    return 'You have selected "{}"'.format(value)
 
 if __name__ == '__main__':
     app.run_server(debug=False)

@@ -9,29 +9,15 @@ import numpy as np
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 
+
+df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/FeatureTable_All.csv', sep=';')
+
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/all-accrest-channels-2021-10-20-14-02_influxdb_data.csv')
+fig = px.line(df, x='Date_Time', y='A1_All')
 
-app.layout = html.Div(children=[
-    html.H1(children='Status of Channels'),
-    dcc.Dropdown(id='Channel-dropdown', multi=True, value=['Ch000_accrest_g'],
-                 options=[{'label': i, 'value': i}
-                          for i in sorted(df['_field'].unique())],
-                 ),
-    dcc.Graph(id='status-graph', figure={})
+fig.show()
 
-])
-
-@app.callback(
-    Output(component_id='status-graph', component_property='figure'),
-    Input(component_id='Channel-dropdown', component_property='value')
-)
-
-def update_graph(selected_channel):
-    dff = df[df['_field'].isin(selected_channel)]
-    line_fig = px.line(dff, x='_time', y='_value', color='_field')
-    return line_fig
 
 if __name__ == '__main__':
     app.run_server(debug=False)
