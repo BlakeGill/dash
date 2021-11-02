@@ -13,7 +13,14 @@ import base64
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 df = pd.read_csv(
-    'https://raw.githubusercontent.com/BlakeGill/dash/master/all-accrest-channels-2021-10-20-14-02_influxdb_data.csv')
+    'https://raw.githubusercontent.com/BlakeGill/dash/master/all%20channels%20-%202021-10-27-12-13_influxdb_data.csv')
+
+#channels = df['field'[:5]]
+
+#print(channels)
+
+#image_filename = 'dashboard.jpg'
+#encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 app.layout = html.Div(children=[
     html.H1(children='Status of Channels'),
@@ -29,6 +36,7 @@ app.layout = html.Div(children=[
                     sizey=2,
                     sizing='stretch',
                 )
+                #html.Img(src='data:image/png;base64,{}'.format(encoded_image))
             ), html.H2('Image of system'),
             dcc.Dropdown(id='blank', multi=False,
                          options=[{'label' : x, 'value':x}
@@ -50,6 +58,11 @@ app.layout = html.Div(children=[
 
 @app.callback(
     Output(component_id='status-graph', component_property='figure'),
+    Input(component_id='blank', component_property='value')
+)
+
+@app.callback(
+    Output(component_id='line-fig', component_property='figure'),
     Input(component_id='Channel-dropdown', component_property='value')
 )
 def update_graph(selected_channel):
