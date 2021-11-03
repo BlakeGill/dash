@@ -18,10 +18,12 @@ channel = []
 
 # class examples
 # init
-new_channel = test_class.channel("CH001")
+#new_channel = test_class.channel("CH001")
 
 # class method use
-new_channel.AddParameter("accrest_g")
+#new_channel.AddParameter("accrest_g")
+
+parameter = []
 
 for i in df['_field']:
     i=i[:5]
@@ -29,7 +31,7 @@ for i in df['_field']:
 
 for j in df['_field']:
     j=j[6:]
-#    parameter.append(j)
+    parameter.append(j)
 
 #print(parameter)
 #print(channel)
@@ -40,8 +42,8 @@ app.layout = html.Div([
     html.Label("Channel:", style={'fontSize':30, 'textAlign':'center'}),
         dcc.Dropdown(
             id='channel-dpdn',
-            options=[{'label': s, 'value': s} for s in sorted(df._field.unique())],
-            value=None,
+            options=[{'label': s, 'value': s} for s in sorted(df[channel].unique())],
+            value=[],
             clearable=False
         ),
 
@@ -60,8 +62,8 @@ app.layout = html.Div([
     Input('channel-dpdn', 'value'),
 )
 def set_parameter_options(chosen_parameter):
-    dff = df[df._field[5:]==chosen_parameter]
-    parameter_of_channel = [{'label': c, 'value': c} for c in sorted(dff._field.unique())]
+    dff = df[df[parameter]==chosen_parameter]
+    parameter_of_channel = [{'label': c, 'value': c} for c in sorted(dff[parameter].unique())]
     values_selected = [x['value'] for x in parameter_of_channel]
     return parameter_of_channel, values_selected
 
@@ -73,7 +75,7 @@ def set_parameter_options(chosen_parameter):
 )
 
 def update_graph(selected_parameters, selected_channels):
-    dff = df[(df._field==selected_channels) & (df._field.isin(selected_parameters))]
+    dff = df[(df[channel]==selected_channels) & (df[parameter].isin(selected_parameters))]
     fig = px.line(dff, x='_time', y='_value' )
     return dcc.Graph(id='display-map', figure=fig)
 
