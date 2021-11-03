@@ -1,6 +1,6 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 import plotly.graph_objs as go
 import pandas as pd
 import plotly
@@ -8,12 +8,20 @@ import plotly.express as px
 import numpy as np
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
+import test_class
 
-
+# csv source
 df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/all%20channels%20-%202021-10-27-12-13_influxdb_data.csv')
 
+# list of channel object
 channel = []
-parameter = []
+
+# class examples
+# init
+new_channel = test_class.channel("CH001")
+
+# class method use
+new_channel.AddParameter("accrest_g")
 
 for i in df['_field']:
     i=i[:5]
@@ -21,7 +29,7 @@ for i in df['_field']:
 
 for j in df['_field']:
     j=j[6:]
-    parameter.append(j)
+#    parameter.append(j)
 
 #print(parameter)
 #print(channel)
