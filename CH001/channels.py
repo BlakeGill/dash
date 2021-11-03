@@ -26,10 +26,12 @@ for j in df['_field']:
     j=j[6:]
     parameter.append(j)
 
+print(parameter)
+
 # extra user-made columns
 df["Channels"] = channel
 df["Parameter"] = parameter
-print(df)
+
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -37,15 +39,15 @@ app.layout = html.Div([
     html.Label("Channel:", style={'fontSize':30, 'textAlign':'center'}),
         dcc.Dropdown(
             id='channel-dpdn',
-            options=[{'label': s, 'value': s} for s in sorted(df["_field"].unique())],
-            value=[],
+            options=[{'label': s, 'value': s} for s in sorted(df["Channels"].unique())],
+            value=None,
             clearable=False
         ),
 
     html.Label("Parameter:", style={'fontSize':30, 'textAlign':'center'}),
         dcc.Dropdown(id='parameter-dpdn',
                  options=[],
-                 value=[],
+                 value=None,
                  multi=True),
         html.Div(id='graph-container', children=[])
 ])
@@ -57,9 +59,9 @@ app.layout = html.Div([
     Input('channel-dpdn', 'value'),
 )
 def set_parameter_options(chosen_parameter):
-    dff = df[df["_field"]==chosen_parameter]
-    parameter_of_channel = [{'label': c, 'value': c} for c in sorted(dff["_field"].unique())]
-    values_selected = [x['value'] for x in parameter_of_channel]
+    dff = df[df["Channels"]==chosen_parameter]
+    parameter_of_channel = [{'label': c, 'value': c} for c in sorted(dff["Parameter"].unique())]
+    values_selected = None
     return parameter_of_channel, values_selected
 
 @app.callback(
@@ -70,8 +72,8 @@ def set_parameter_options(chosen_parameter):
 )
 
 def update_graph(selected_parameters, selected_channels):
-    dff = df[(df["_field"]==selected_channels) & (df["_field"].isin(selected_parameters))]
-    fig = px.line(dff, x='_time', y='_value' )
+    dff = df[(df["Channels"]==selected_channels) & (df["Parameter"].isin(selected_parameters))]
+    fig = px.line(dff, x='_time', y='_value', color='Parameter')
     return dcc.Graph(id='display-map', figure=fig)
 
 if __name__ == '__main__':
