@@ -8,7 +8,6 @@ import plotly.express as px
 import numpy as np
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
-import base64
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -17,11 +16,7 @@ df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/Featur
 app.layout = html.Div(children=[
     html.H1(children='Status of Channels'),
         dcc.Dropdown(id='Channel-dropdown', multi=True,
-        options = [
-            {'label': 'A1', 'Value' : 'A1_All'},
-            {'label': 'A2', 'Value' : 'A2_All'},
-            {'label': 'A3', 'Value' : 'A3_All'}
-        ],),
+        options = [],),
         html.Div(id='dd-output'),
         dcc.Graph(id='line-fig,', figure={})
     ])
@@ -37,12 +32,13 @@ app.layout = html.Div(children=[
 
 )
 
-def update_graph(selected_channel):
+def select_channel(selected_channel):
     dff = df[df.State==selected_channel]
-    return [{'label': c, 'value': c} for c in sorted(dff.Column.unique)]
+    return [{'label': c, 'value': c} for c in sorted(dff.Columns.unique)]
 
 def update_output(value):
     return 'You have selected "{}"'.format(value)
 
 if __name__ == '__main__':
     app.run_server(debug=False)
+
