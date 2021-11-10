@@ -10,6 +10,7 @@ from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 import test_class
 
+
 # csv source
 df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/all%20channels%20-%202021-10-27-12-13_influxdb_data.csv')
 
@@ -47,7 +48,7 @@ app.layout = html.Div([
     html.Label("Parameter:", style={'fontSize':30, 'textAlign':'center'}),
         dcc.Dropdown(id='parameter-dpdn',
                  options=[],
-                 value=None,
+                 value=[],
                  multi=True),
         html.Div(id='graph-container', children=[])
 ])
@@ -61,7 +62,7 @@ app.layout = html.Div([
 def set_parameter_options(chosen_parameter):
     dff = df[df["Channels"]==chosen_parameter]
     parameter_of_channel = [{'label': c, 'value': c} for c in sorted(dff["Parameter"].unique())]
-    values_selected = None
+    values_selected = [x['value']for x in parameter_of_channel]
     return parameter_of_channel, values_selected
 
 @app.callback(

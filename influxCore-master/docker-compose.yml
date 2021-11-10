@@ -1,0 +1,32 @@
+version: '3'
+services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+  influxdb:
+    image: influxdb
+    ports:
+      - "8086:8086"
+  # Use the influx cli to set up an influxdb instance.
+  influxdb_cli:
+    links:
+      - influxdb
+    image: influxdb
+    entrypoint: influx setup --bucket process -t 2UVwEBfD4Kj5FrN5WJHyxcDvw73EfL5RV1IpGE4zv14rIR2RAY-jMFkopjk1_iamFfcwwsHHND2R1Bn4-9mQSA== -o framatome --username=framatome --password=framatome12345 --host=http://influxdb:8086 -f
+    restart: on-failure:10
+    depends_on:
+      - influxdb
+  influx-core:
+    links:
+      - influxdb
+      - redis
+    build: .
+    ports:
+      - "8000:80"
+    environment:
+      INFLUXDB_V2_URL: "http://influxdb:8086"
+      INFLUXDB_V2_ORG: "framatome"
+      INFLUXDB_V2_TOKEN: "2UVwEBfD4Kj5FrN5WJHyxcDvw73EfL5RV1IpGE4zv14rIR2RAY-jMFkopjk1_iamFfcwwsHHND2R1Bn4-9mQSA=="
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
