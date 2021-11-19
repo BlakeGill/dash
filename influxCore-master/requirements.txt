@@ -1,0 +1,7 @@
+requests
+pandas
+influxdb-client
+python-multipart
+redis
+fastapi
+locust
