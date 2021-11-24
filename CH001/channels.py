@@ -11,10 +11,7 @@ import dash_bootstrap_components as dbc
 import test_class
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 2a5a33d9db30bb8101e1f063e7b50b0f70826392
 # csv source
 df = pd.read_csv('https://raw.githubusercontent.com/BlakeGill/dash/master/all%20channels%20-%202021-10-27-12-13_influxdb_data.csv')
 
